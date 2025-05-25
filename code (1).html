@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <title>FARMToque</title>
+    <style>
+        /* Reset & base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0; background: #f5f7fa; color: #333;
+        }
+        header {
+            background: #34495e;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+        /* Container */
+        .container {
+            max-width: 960px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        /* Login Form */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        .input-box input {
+            width: 100%;
+            padding: 0.6rem 2rem;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .input-box i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bbb;
+        }
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .login {
+            background: #2980b9;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .login:hover {
+            background: #1c5980;
+        }
+        .register-link {
+            margin-top: 1rem;
+        }
+        /* Menu Buttons */
+        #menu {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        #menu button {
+            background: #2980b9;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #menu button:hover, #menu button.active {
+            background: #1c5980;
+        }
+        /* Screens */
+        .screen {
+            display: none;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+        }
+        .screen.active {
+            display: block;
+        }
+        /* Additional styles for catalog, stock, chat, and admin sections... */
+        /* (Include the rest of your styles here as needed) */
+    </style>
+</head>
+<body>
+    <header>FARMToque</header>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="login-screen" class="screen active">
+            <form class="login-form" id="login-form">
+                <h1>LOGIN</h1>
+                <div class="input-box">
+                    <input placeholder="Usuário" type="email" required>
+                    <i class="bx bxs-user"></i>
+                </div>
+                <div class="input-box">
+                    <input placeholder="Senha" type="password" required>
+                    <i class="bx bxs-lock-alt"></i>
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox">
+                        Lembrar senha
+                    </label>
+                    <a href="#">Esqueci a senha</a>
+                </div>
+                <button type="submit" class="login">Login</button>
+                <div class="register-link">
+                    <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Menu Screen -->
+        <nav id="menu" aria-label="Menu de Navegação" style="display: none;">
+            <button id="btn-catalogo" class="active" aria-controls="catalog-screen" aria-selected="true">Catálogo</button>
+            <button id="btn-estoque" aria-controls="stock-screen" aria-selected="false">Estoque</button>
+            <button id="btn-atendimento" aria-controls="chat-screen" aria-selected="false">Atendimento</button>
+            <button id="btn-administracao" aria-controls="admin-screen" aria-selected="false">Administração</button>
+        </nav>
+
+        <!-- Catálogo Screen -->
+        <section id="catalog-screen" class="screen" role="region" aria-label="Consulta de Catálogo">
+            <h2>Catálogo de Medicamentos</h2>
+            <div id="catalog-list" tabindex="0" aria-live="polite" aria-relevant="additions">
+                <ul id="catalog-items">
+                    <!-- Dynamic catalog items here -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Estoque Screen -->
+        <section id="stock-screen" class="screen" role="region" aria-label="Consulta de Estoque">
+            <h2>Consulta de Estoque</h2>
+            <table id="stock-table" aria-describedby="stock-desc">
+                <caption id="stock-desc" class="sr-only">Tabela mostrando o estoque atual dos medicamentos</caption>
+                <thead>
+                    <tr>
+                        <th>Medicamento</th>
+                        <th>Quantidade em Estoque</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-items">
+                    <!-- Dynamic stock rows here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Atendimento Screen -->
+        <section id="chat-screen" class="screen" role="region" aria-label="Atendimento por Chatbot">
+            <h2>Atendimento</h2>
+            <div id="chat-container" aria-live="polite" aria-relevant="additions">
+                <div id="chat-log" tabindex="0" aria-label="Log de conversa do chatbot">
+                    <!-- Chat messages appended here -->
+                </div>
+                <div id="chat-options" role="list" aria-label="Opções de atendimento">
+                    <!-- Options buttons generated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Administração Screen -->
+        <section id="admin-screen" class="screen" role="region" aria-label="Administração - Pedido de Medicamentos">
+            <h2>Pedido de Medicamentos para o Setor de Compras</h2>
+            <form id="admin-form" aria-label="Formulário para fazer pedido de medicamentos">
+                <label for="med-name">Nome do Medicamento</label>
+                <input type="text" id="med-name" name="med-name" required placeholder="Digite o nome do medicamento"/>
+                <label for="med-quantity">Quantidade</label>
+                <input type="number" id="med-quantity" name="med-quantity" min="1" required placeholder="Quantidade a pedir"/>
+                <label for="med-comments">Comentários (opcional)</label>
+                <textarea id="med-comments" name="med-comments" rows="4" placeholder="Comentários adicionais"></textarea>
+                <button type="submit">Enviar Pedido</button>
+            </form>
+            <p id="admin-feedback" role="alert" style="margin-top:1rem; color: green; font-weight: 600;"></p>
+        </section>
+    </div>
+
+    <script>
+        // Navigation logic
+        const menuButtons = document.querySelectorAll('#menu button');
+        const screens = document.querySelectorAll('.screen');
+        const loginScreen = document.getElementById('login-screen');
+        const menu = document.getElementById('menu');
+
+        function switchScreen(targetId) {
+            screens.forEach(screen => {
+                if(screen.id === targetId) {
+                    screen.classList.add('active');
+                } else {
+                    screen.classList.remove('active');
+                }
+            });
+            menuButtons.forEach(btn => {
+                if(btn.getAttribute('aria-controls') === targetId) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
+                } else {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-selected', 'false');
+                }
+            });
+        }
+
+        menuButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchScreen(btn.getAttribute('aria-controls'));
+            });
+        });
+
+        // Login form submission
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Here you can add authentication logic if needed
+            // For now, we will just switch to the menu
+            loginScreen.classList.remove('active');
+            menu.style.display = 'flex'; // Show the menu
+            switchScreen('catalog-screen'); // Switch to the catalog screen
+        });
+
+        // Catálogo data & populate
+        const catalogItems = [
+            {name:"Paracetamol", description:"Analgésico e antipirético", price:"R$ 5,00"},
+            {name:"Ibuprofeno", description:"Analgésico, anti-inflamatório", price:"R$ 12,00"},
+            {name:"Amoxicilina", description:"Antibiótico de amplo espectro", price:"R$ 25,00"},
+            {name:"Omeprazol", description:"Reduz acidez gástrica", price:"R$ 15,00"},
+            {name:"Loraxadina", description:"Antialérgico", price:"R$ 18,00"}
+        ];
+        const catalogListEl = document.getElementById('catalog-items');
+
+        function loadCatalog() {
+            catalogListEl.innerHTML = '';
+            catalogItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - ${item.description} (${item.price})`;
+                catalogListEl.appendChild(li);
+            });
+        }
+        loadCatalog();
+
+        // Estoque data & populate
+        const stockItems = [
+            {name:"Paracetamol", quantity:150, description:"Embalagens de 20 comprimidos"},
+            {name:"Ibuprofeno", quantity:80, description:"Embalagens de 30 comprimidos"},
+            {name:"Amoxicilina", quantity:60, description:"Embalagens de 10 cápsulas"},
+            {name:"Omeprazol", quantity:100, description:"Embalagens de 14 cápsulas"},
+            {name:"Loraxadina", quantity:75, description:"Embalagens de 20 comprimidos"}
+        ];
+        const stockTableBody = document.getElementById('stock-items');
+
+        function loadStock() {
+            stockTableBody.innerHTML = '';
+            stockItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.description}</td>
+                `;
+                stockTableBody.appendChild(tr);
+            });
+        }
+        loadStock();
+
+        // Chatbot
+        const chatLog = document.getElementById('chat-log');
+        const chatOptions = document.getElementById('chat-options');
+
+        // Initial bot message
+        const initialOptions = [
+            {id: 'op1', label: 'Informações sobre medicamentos'},
+            {id: 'op2', label: 'Horário de atendimento'},
+            {id: 'op3', label: 'Falar com um atendente'},
+            {id: 'op4', label: 'Localização da farmácia'}
+        ];
+
+        function appendChatMessage(text, sender='bot') {
+            const msg = document.createElement('div');
+            msg.classList.add('chat-message');
+            if(sender === 'bot') {
+                msg.classList.add('bot-message');
+            } else {
+                msg.classList.add('user-message');
+            }
+            msg.textContent = text;
+            chatLog.appendChild(msg);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        function clearChatOptions() {
+            chatOptions.innerHTML = '';
+        }
+
+        function showChatOptions(options) {
+            clearChatOptions();
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt.label;
+                btn.setAttribute('role', 'listitem');
+                btn.addEventListener('click', () => {
+                    appendChatMessage(opt.label, 'user');
+                    handleChatOption(opt.id);
+                });
+                chatOptions.appendChild(btn);
+            });
+        }
+
+        function handleChatOption(optionId) {
+            switch(optionId) {
+                case 'op1':
+                    appendChatMessage('Aqui estão algumas informações sobre medicamentos: Sempre siga a prescrição médica e leia a bula antes de usar.');
+                    showChatOptions(initialOptions);
+                    break;
+                case 'op2':
+                    appendChatMessage('Nosso horário de atendimento é de segunda a sexta, das 8h às 18h, e sábado das 8h às 12h.');
+                    showChatOptions(initialOptions);
+                    break;
+                case 'op3':
+                    appendChatMessage('Um atendente estará disponível em breve. Por favor, aguarde.');
+                    clearChatOptions();
+                    break;
+                case 'op4':
+                    appendChatMessage('Estamos localizados na Av. Central, 123, Centro.');
+                    showChatOptions(initialOptions);
+                    break;
+                default:
+                    appendChatMessage('Não entendi. Por favor, selecione uma opção válida.');
+                    showChatOptions(initialOptions);
+                    break;
+            }
+        }
+
+        // Start chat with welcome message and options
+        function startChat() {
+            chatLog.innerHTML = '';
+            appendChatMessage('Olá! Como posso ajudar você hoje? Selecione uma das opções abaixo:');
+            showChatOptions(initialOptions);
+        }
+
+        // Restart chat when user navigates to Atendimento screen
+        document.getElementById('btn-atendimento').addEventListener('click', startChat);
+
+        // Initialize chat on load if Atendimento screen is active
+        if(document.getElementById('chat-screen').classList.contains('active')) {
+            startChat();
+        }
+
+        // Administração - pedido form
+        const adminForm = document.getElementById('admin-form');
+        const adminFeedback = document.getElementById('admin-feedback');
+
+        adminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const medName = adminForm['med-name'].value.trim();
+            const medQuantity = parseInt(adminForm['med-quantity'].value, 10);
+            const medComments = adminForm['med-comments'].value.trim();
+
+            if(medName === '' || isNaN(medQuantity) || medQuantity < 1) {
+                adminFeedback.textContent = 'Por favor, preencha o nome do medicamento e quantidade válidos.';
+                adminFeedback.style.color = 'red';
+                return;
+            }
+
+            // For demo, just show confirmation
+            adminFeedback.style.color = 'green';
+            adminFeedback.textContent = `Pedido enviado para o setor de compras: ${medQuantity} unidade(s) de "${medName}".`;
+
+            // Reset form
+            adminForm.reset();
+        });
+    </script>
+</body>
+</html>
